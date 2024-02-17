@@ -29,14 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.clase.Intake;
+import org.firstinspires.ftc.teamcode.clase.Outtake;
 
 
 @TeleOp
@@ -50,6 +51,7 @@ public class RegionalaTeleop extends LinearOpMode {
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
     Intake Int = new Intake();
+    Outtake Out = new Outtake();
     @Override
     public void runOpMode() {
 
@@ -61,6 +63,13 @@ public class RegionalaTeleop extends LinearOpMode {
         Int.ServoStanga = hardwareMap.get(Servo.class,"ServoStanga");
         Int.ServoDreapta = hardwareMap.get(Servo.class,"ServoDreapta");
         Int.MIntake = hardwareMap.get(DcMotor.class,"Intake");
+        Out.Slider1 = hardwareMap.get(DcMotor.class,"SliderSt");
+        Out.Slider2 = hardwareMap.get(DcMotor.class,"SliderDr");
+        Out.Brat1 = hardwareMap.get(Servo.class,"BratSt");
+        Out.Brat2 = hardwareMap.get(Servo.class,"BratDr");
+        Out.Carlig = hardwareMap.get(Servo.class,"Carlig");
+        Out.Slider1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        Out.Slider2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);

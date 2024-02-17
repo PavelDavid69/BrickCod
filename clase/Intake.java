@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake{
 
-    public DcMotor MIntake;
-    public Servo ServoStanga;
-    public Servo ServoDreapta;
+    public DcMotor MIntake = null;
+    public Servo ServoStanga = null;
+    public Servo ServoDreapta = null;
 
 
     public void IntakeF()
