@@ -24,10 +24,11 @@ public class Outtake
     OptimisedServo rightBrat = new OptimisedServo(rightB);
     Servo gh;
     OptimisedServo gheara = new OptimisedServo(gh);
-    PID_coeficients pid = new PID_coeficients(0,0,0);
+    PID_coeficients pid = new PID_coeficients(0.01,0.0,0.005);
     PID_controller lift = new PID_controller(pid);
 
     public int treapta = 1;
+    public boolean cobinst =  false;
 
 
     public void init(HardwareMap hwMap)
@@ -56,7 +57,11 @@ public class Outtake
     }
     public void ridicare(Gamepad gamepad)
     {
-        if(gamepad.dpad_up)
+        if(cobinst) {
+            if (gamepad.dpad_up)
+                cobinst = false;
+        }
+            else if (gamepad.dpad_up)
         {
             treapta++;
             treapta = Range.clip(treapta, 1, 11);
@@ -70,12 +75,41 @@ public class Outtake
             treapta = Range.clip(treapta, 1, 11);
         }
     }
+    public void coboraretotal(Gamepad gamepad)
+    {
+        if(gamepad.triangle)
+            cobinst = true;
+    }
     public void setPid()
     {
-        int liftTargetPosition = Constant.pixel_1_position + (treapta - 1) * Constant.pixel_level_increment;
+        int liftTargetPosition = 0;
+        if(cobinst)
+            liftTargetPosition= Constant.pixel_1_position;
+        else
+            liftTargetPosition = Constant.pixel_1_position + (treapta - 1) * Constant.pixel_level_increment;
         leftSlide.setPower(lift.update(leftSlide.getCurrentPosition(), liftTargetPosition));
         rightSlide.setPower(lift.update(leftSlide.getCurrentPosition(), liftTargetPosition));
     }
 
-
+    public void punerePanou(Gamepad gamepad)
+    {
+        if(gamepad.right_bumper)
+        {
+            leftBrat.setPosition(1);
+            rightBrat.setPosition(1);
+        }
+    }
+    public void punereIntake(Gamepad gamepad)
+    {
+        if(gamepad.left_bumper)
+        {
+            leftBrat.setPosition(0);
+            rightBrat.setPosition(0);
+        }
+    }
+    public void lasare(Gamepad gamepad)
+    {
+        if(gamepad.cross)
+            gheara.setPosition(0);
+    }
 }

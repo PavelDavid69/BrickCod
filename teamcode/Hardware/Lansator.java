@@ -19,6 +19,6 @@ public class Lansator {
     public void lansare(Gamepad gamepad)
     {
         if(gamepad.triangle)
-        Lans.setPosition(1);
+            Lans.setPosition(1);
     }
 }
