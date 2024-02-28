@@ -48,7 +48,7 @@ public class DriveTrain {
     public void mecanumDrive(Gamepad gamepad){
         double drive = -gamepad.left_stick_y;
         double strafe = gamepad.left_stick_x;
-        double turn = gamepad.right_stick_x;
+        double turn = -gamepad.right_stick_x;
 
         double brake = 1.0;
 
@@ -65,7 +65,7 @@ public class DriveTrain {
             rrPower/=maxPower;
         }
 
-        if (gamepad.right_bumper)
+        if (gamepad.right_trigger > 0)
             brake = 0.5;
         else brake = 1.0;
 

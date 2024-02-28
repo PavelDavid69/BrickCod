@@ -22,8 +22,8 @@ public class Intake {
     Servo rightservo;
     OptimisedServo rightangleintake = new OptimisedServo(rightservo);
     OptimisedServo carlig = new Outtake().gheara;
-    ColorSensor senzorSus;
-    ColorSensor senzorJos;
+    //ColorSensor senzorSus;
+    //ColorSensor senzorJos;
     public void init(HardwareMap hwMap) {
         spinner.setName("Spinner", hwMap);
         spinner.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -33,28 +33,34 @@ public class Intake {
         leftangleintake.setName("leftangle", hwMap);
         rightangleintake.setName("rightangle", hwMap);
 
-        senzorSus = hwMap.get(ColorSensor.class,"senzorSus");
-        senzorJos = hwMap.get(ColorSensor.class, "senzorJos");
+        //senzorSus = hwMap.get(ColorSensor.class,"senzorSus");
+        //senzorJos = hwMap.get(ColorSensor.class, "senzorJos");
     }
 
     public void turnOn(Gamepad gamepad) {
-        if (gamepad.right_trigger > 0) {
+        if (gamepad.left_trigger > 0 && gamepad.left_bumper) {
+            leftangleintake.setPosition(1);
+            rightangleintake.setPosition(0.7);
+            spinner.setPower(-1);
+        } else if (gamepad.left_trigger > 0)
+        {
             leftangleintake.setPosition(1);
             rightangleintake.setPosition(0.7);
             spinner.setPower(1);
-        } else {
+        }
+        else
+        {
             leftangleintake.setPosition(0);
             rightangleintake.setPosition(-0.3);
             spinner.setPower(0);
         }
     }
-    public void verificare()
+    //public void verificare()
     {
-        if(senzorJos.blue() > 0 && senzorSus.blue() > 0)
-            carlig.setPosition(1);
-    }
+        //if(senzorJos.green() > 0 && senzorSus.green() > 0)
+            //carlig.setPosition(1);
+    }//
 }
-
 
 
 
