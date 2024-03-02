@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedMotor;
 
 
@@ -17,6 +20,7 @@ public class DriveTrain {
     OptimisedMotor rearLeft = new OptimisedMotor(rL);
     DcMotorEx rR;
     OptimisedMotor rearRight = new OptimisedMotor(rR);
+    LynxModule vReg;
 
     public void init(HardwareMap hwMap){
         frontLeft.setName("frontLeft", hwMap);
@@ -64,10 +68,17 @@ public class DriveTrain {
             rlPower/=maxPower;
             rrPower/=maxPower;
         }
+        flPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
+        frPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
+        rlPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
+        rrPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
+
 
         if (gamepad.right_trigger > 0)
             brake = 0.5;
+
         else brake = 1.0;
+
 
         frontLeft.setPower(flPower * brake);
         frontRight.setPower(frPower * brake);
