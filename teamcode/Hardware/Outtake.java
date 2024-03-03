@@ -2,13 +2,17 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import org.checkerframework.checker.units.qual.C;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Hardware_Optimisations.LimitSwitch;
 import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedMotor;
 import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedServo;
-import org.firstinspires.ftc.teamcode.PID_classes.PID_coeficients;
-import org.firstinspires.ftc.teamcode.PID_classes.PID_controller;
+import org.firstinspires.ftc.teamcode.PID_classes.PDFController;
+
 import org.firstinspires.ftc.teamcode.Constant;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.control.PIDFController;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
@@ -20,9 +24,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 
+@Config
 public class Outtake
 {
-    ElapsedTime delay = new ElapsedTime();
+    public ElapsedTime delay = new ElapsedTime();
     DcMotorEx leftM, rightM;
     OptimisedMotor leftSlide = new OptimisedMotor(leftM);
     OptimisedMotor rightSlide = new OptimisedMotor(rightM);
@@ -33,20 +38,30 @@ public class Outtake
     Servo rot;
     OptimisedServo gheara = new OptimisedServo(gh);
     OptimisedServo rotitor = new OptimisedServo(rot);
-    PID_coeficients pid = new PID_coeficients(0.01,0.0,0.005);
-    PID_controller lift = new PID_controller(pid);
+    public static volatile double p = 0.0095;
+    public static volatile double d = 0.001
+            ;
+    public static volatile double f = 0.09;
+    PDFController lift = new PDFController(p,d,f);
     public NormalizedColorSensor senzorJos;
     public NormalizedColorSensor senzorSus;
 
 
     public int treapta = 1;
+    public int liftTargetPosition = 0;
     public static double bratStanga = 0;
     public static double bratDreapta = 0;
     public static double rotitoare = 0;
     public static double carlig = 0;
-    public boolean cobinst =  false;
-    public boolean desch = true;
+    public boolean cob =  false;
+    public boolean rid = true;
+    public boolean full = false;
+    public DigitalChannel bt;
+    LimitSwitch buton = new LimitSwitch(bt);
 
+    private final PDFController pdfController = new PDFController(p, d, f);
+
+    public static volatile int pixelLevel = Constant.PIXEL_LEVEL_MIN;
 
 
 
@@ -57,7 +72,9 @@ public class Outtake
         leftSlide.setPower(0.0);
         rightSlide.setPower(0.0);
 
-        leftSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        buton.setName("BUTON",hwMap);
+
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -96,47 +113,58 @@ public class Outtake
         rotitor.setPosition(rotitoare);
         gheara.setPosition(carlig);
     }
-    public void ridicare()
-    {
-        if(cobinst) {
-                cobinst = false;
-        }
-        else
-        {
-            treapta++;
-        }
-    }
-    public void coborare()
-    {
-        {
-            treapta--;
-        }
-    }
-    public void coboraretotal()
-    {
-            cobinst = true;
 
+    public void coboraretotal() {
+        bratStanga = Constant.pozServoBratStangaInit;
+        bratDreapta = Constant.pozServoBratDreaptaInit;
+        rotitoare = Constant.pozRotitorInit;
+        leftSlide.setPower(-1);
+        rightSlide.setPower(-1);
+    }
+    public void pixelLevelDecrement()
+    {
+        pixelLevel--;
+    }
+    public void pixelLevelIncrement() {
+        pixelLevel++;
+    }
+
+    public void rid()
+    {
+        rid = true;
+        cob = false;
+    }
+    public void cob()
+    {
+        rid = false;
+        cob = true;
     }
     public void setPid()
     {
-        int liftTargetPosition = 0;
+        pdfController.setCoefficients(p, d, f);
 
-        if(cobinst) {
-            delay.reset();
-            bratStanga = Constant.pozServoBratStangaInit;
-            bratDreapta = Constant.pozServoBratDreaptaInit;
-            rotitoare = Constant.pozRotitorInit;
-            if(delay.milliseconds() > 500) {
-                liftTargetPosition = Constant.pixel_1_position;
+        if (cob) {
+            if (buton.isPressed()) {
+
+                leftSlide.setPower(0.0);
+                rightSlide.setPower(0.0);
+                leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                leftSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                rightSlide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            } else {
+                leftSlide.setPower(Constant.LOWER_POWER);
+                rightSlide.setPower(Constant.LOWER_POWER);
             }
-        }
-        else {
+        } else if (rid) {
+            pixelLevel = Range.clip(pixelLevel, Constant.PIXEL_LEVEL_MIN, Constant.PIXEL_LEVEL_MAX);
 
-                liftTargetPosition = Constant.pixel_1_position + (treapta - 1) * Constant.pixel_level_increment;
+            liftTargetPosition = Constant.PIXEL_LEVEL_BASE + Constant.PIXEL_LEVEL_INCREMENT * pixelLevel;
 
+            double power = pdfController.update(liftTargetPosition, leftSlide.getCurrentPosition());
+            leftSlide.setPower(power);
+            rightSlide.setPower(power);
         }
-        leftSlide.setPower(lift.update(leftSlide.getCurrentPosition(), liftTargetPosition));
-        rightSlide.setPower(lift.update(leftSlide.getCurrentPosition(), liftTargetPosition));
 
     }
 
@@ -148,21 +176,25 @@ public class Outtake
             bratDreapta = Constant.pozServoBratDreaptaPanou;
             rotitoare = Constant.pozRotitorPanou;
 
-
     }
     public void lasare() {
+        if(senzorJos.getNormalizedColors().green > 0.2 && full)
+           carlig = Constant.deschis;
 
-        carlig = Constant.inchis;
-        desch = false;
     }
-
-
-
-
-
     public void verificare()
     {
-        if(senzorJos.getNormalizedColors().green > 0.01 && senzorSus.getNormalizedColors().green > 0.01)
-            carlig = Constant.inchis;
+        if(senzorJos.getNormalizedColors().green > 0.02 && !full)
+        {
+                carlig = Constant.inchis;
+                full = true;
+        }
+
+    }
+    public void updt(Telemetry telemetry)
+    {
+        telemetry.addData("Motor stanga",leftSlide.getCurrentPosition());
+        telemetry.addData("Motor dreapta",rightSlide.getCurrentPosition());
+        telemetry.update();
     }
 }

@@ -20,7 +20,6 @@ public class DriveTrain {
     OptimisedMotor rearLeft = new OptimisedMotor(rL);
     DcMotorEx rR;
     OptimisedMotor rearRight = new OptimisedMotor(rR);
-    LynxModule vReg;
 
     public void init(HardwareMap hwMap){
         frontLeft.setName("frontLeft", hwMap);
@@ -68,10 +67,7 @@ public class DriveTrain {
             rlPower/=maxPower;
             rrPower/=maxPower;
         }
-        flPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
-        frPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
-        rlPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
-        rrPower *= 12.0 / vReg.getInputVoltage(VoltageUnit.VOLTS);
+
 
 
         if (gamepad.right_trigger > 0)

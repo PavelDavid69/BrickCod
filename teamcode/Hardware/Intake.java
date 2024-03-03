@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedMotor;
 import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedServo;
 import org.firstinspires.ftc.teamcode.Constant;
+import org.firstinspires.ftc.teamcode.Hardware.Outtake;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 public class Intake {
@@ -19,7 +21,6 @@ public class Intake {
 
     Servo leftservo;
     OptimisedServo leftangleintake = new OptimisedServo(leftservo);
-
 
     public void init(HardwareMap hwMap) {
         spinner.setName("Spinner", hwMap);

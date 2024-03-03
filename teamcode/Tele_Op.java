@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.teamcode.Hardware.Intake;
@@ -19,8 +20,10 @@ import org.firstinspires.ftc.teamcode.Hardware_Optimisations.OptimisedMotor;
 public class Tele_Op extends LinearOpMode {
 
     DriveTrain dt = new DriveTrain();
+
     Intake intake = new Intake();
     Outtake outtake = new Outtake();
+
     //Lansator lansator = new Lansator();
 
 
@@ -31,11 +34,9 @@ public class Tele_Op extends LinearOpMode {
         intake.init(hardwareMap);
         outtake.init(hardwareMap);
         //lansator.init(hardwareMap);
-      //  while(opModeInInit()) {
-            intake.initPozInt();
-            outtake.initPozOut();
-   //     }
 
+        intake.initPozInt();
+        outtake.initPozOut();
 
 
 
@@ -44,29 +45,38 @@ public class Tele_Op extends LinearOpMode {
         while(opModeIsActive()){
 
             dt.mecanumDrive(gamepad1);
-            if(gamepad1.left_trigger > 0 && gamepad1.left_bumper)
-            intake.turnOnReverse();
+            if(gamepad1.left_trigger > 0 && gamepad1.left_bumper) {
+                intake.turnOnReverse();
+            }
             else if (gamepad1.left_trigger > 0)
             {
               intake.turnOn();
             }
-            else
+            else {
                 intake.turnOff();
-
-            intake.initPozInt();
+            }
             outtake.verificare();
             outtake.Servouri();
-            if(gamepad2.dpad_up)
-            outtake.ridicare();
-            if(gamepad2.dpad_down)
-            outtake.coborare();
-                if (gamepad2.triangle)
-            outtake.coboraretotal();
+            if(gamepad2.dpad_up) {
+                outtake.rid();
+                outtake.pixelLevelIncrement();
+            }
+            if(gamepad2.dpad_down) {
+                outtake.cob();
+                outtake.pixelLevelDecrement();
+            }
+            if (gamepad2.triangle) {
+                outtake.coboraretotal();
+            }
+
             outtake.setPid();
-            if(gamepad2.right_bumper)
-            outtake.punerePanou();
-            if(gamepad2.triangle)
-            outtake.lasare();
+            if(gamepad2.right_bumper) {
+                outtake.punerePanou();
+            }
+            if(gamepad2.cross) {
+                outtake.lasare();
+            }
+            outtake.updt(telemetry);
             //lansator.lansare(gamepad2);
 
         }
