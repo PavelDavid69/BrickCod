@@ -74,8 +74,8 @@ public class Outtake
 
         buton.setName("BUTON",hwMap);
 
-        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSlide.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE );
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -177,20 +177,24 @@ public class Outtake
             rotitoare = Constant.pozRotitorPanou;
 
     }
+
     public void lasare() {
-        if(senzorJos.getNormalizedColors().green > 0.2 && full)
+
            carlig = Constant.deschis;
 
     }
-    public void verificare()
+    public void inchidere()
+    {
+        carlig = Constant.inchis;
+    }
+    /*/public void verificare()
     {
         if(senzorJos.getNormalizedColors().green > 0.02 && !full)
         {
                 carlig = Constant.inchis;
                 full = true;
-        }
+        }/*/
 
-    }
     public void updt(Telemetry telemetry)
     {
         telemetry.addData("Motor stanga",leftSlide.getCurrentPosition());

@@ -71,7 +71,7 @@ public class DriveTrain {
 
 
         if (gamepad.right_trigger > 0)
-            brake = 0.5;
+            brake = 0.3;
 
         else brake = 1.0;
 

@@ -55,7 +55,7 @@ public class Tele_Op extends LinearOpMode {
             else {
                 intake.turnOff();
             }
-            outtake.verificare();
+            //outtake.verificare();
             outtake.Servouri();
             if(gamepad2.dpad_up) {
                 outtake.rid();
@@ -75,6 +75,10 @@ public class Tele_Op extends LinearOpMode {
             }
             if(gamepad2.cross) {
                 outtake.lasare();
+            }
+            if(gamepad1.cross)
+            {
+                outtake.inchidere();
             }
             outtake.updt(telemetry);
             //lansator.lansare(gamepad2);

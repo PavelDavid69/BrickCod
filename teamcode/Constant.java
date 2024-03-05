@@ -6,9 +6,8 @@ public class Constant {
 
     public static final double LOWER_POWER = -1.0;
 
-    public static final int PIXEL_LEVEL_BASE = 130;
+    public static final int PIXEL_LEVEL_BASE = 100;
     public static final int PIXEL_LEVEL_INCREMENT = 200;
-
     public static final int PIXEL_LEVEL_MIN = 0;
     public static final int PIXEL_LEVEL_MAX = 10;
 
